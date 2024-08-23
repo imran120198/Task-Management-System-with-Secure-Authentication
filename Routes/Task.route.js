@@ -6,6 +6,33 @@ const { authentication } = require("../Middleware/AuthMiddleware");
 
 const TaskRouter = Router();
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Task:
+ *      type: object
+ *      properties:
+ *        title:
+ *          type: string
+ *          description: Title of the task
+ *        description:
+ *          type: string
+ *          description: Description of the task
+ *        priority:
+ *          type: string
+ *          description: Priority of the task (e.g., low, medium, high)
+ *        status:
+ *          type: string
+ *          description: Status of the task (e.g., pending, in-progress, completed)
+ *        assignedTo:
+ *          type: string
+ *          description: User ID of the person to whom the task is assigned
+ *        createdBy:
+ *          type: string
+ *          description: User ID of the task creator
+ */
+
 // 1. Create Task
 TaskRouter.post(
   "/create",
@@ -38,6 +65,31 @@ TaskRouter.post(
   }
 );
 
+/**
+ * @swagger
+ * /task/create:
+ *   post:
+ *     summary: Create a new task
+ *     tags: [Task]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Task'
+ *     responses:
+ *       201:
+ *         description: New Task Created Successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+
 // 2. Retrive Task
 TaskRouter.get("/", authentication, async (req, res) => {
   try {
@@ -60,6 +112,41 @@ TaskRouter.get("/", authentication, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /task:
+ *   get:
+ *     summary: Retrieve a list of tasks
+ *     tags: [Task]
+ *     parameters:
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by priority
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by status
+ *       - in: query
+ *         name: assignedTo
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by assigned user ID
+ *     responses:
+ *       200:
+ *         description: List of tasks retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       500:
+ *         description: Server error
+ */
+
 // 3. Update Task
 TaskRouter.put("/edit/:id", authentication, async (req, res) => {
   try {
@@ -74,6 +161,38 @@ TaskRouter.put("/edit/:id", authentication, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /task/edit/{id}:
+ *   put:
+ *     summary: Update an existing task
+ *     tags: [Task]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Task'
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Server error
+ */
+
 // 4. Delete Task
 TaskRouter.delete("/delete/:id", authentication, async (req, res) => {
   try {
@@ -84,6 +203,28 @@ TaskRouter.delete("/delete/:id", authentication, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+/**
+ * @swagger
+ * /task/delete/{id}:
+ *   delete:
+ *     summary: Delete an existing task
+ *     tags: [Task]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The task ID
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Server error
+ */
 
 module.exports = {
   TaskRouter,

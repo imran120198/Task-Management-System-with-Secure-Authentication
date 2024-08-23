@@ -7,6 +7,25 @@ const { UserModel } = require("../Models/User.model");
 
 const UserRouter = Router();
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      User:
+ *          type: object
+ *          properties:      
+ *              name:
+ *                  type: string
+ *                  description: The name
+ *              email:
+ *                  type: string
+ *                  description: The user email
+ *              password:
+ *                  type: string
+ *                  description: The user password
+ *
+ */
+
 // 1. User Signup
 UserRouter.post(
   "/signup",
@@ -54,6 +73,29 @@ UserRouter.post(
   }
 );
 
+/**
+ * @swagger
+ * /user/signup:
+ *   post:
+ *     summary: To post the details of a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: The user was successfully registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       500:
+ *         description: Some server error
+ */
+
 // 2. user login
 UserRouter.post(
   "/login",
@@ -92,6 +134,29 @@ UserRouter.post(
     }
   }
 );
+
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: Login User
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: The user was successfully login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       500:
+ *         description: Some server error
+ */
 
 module.exports = {
   UserRouter,
