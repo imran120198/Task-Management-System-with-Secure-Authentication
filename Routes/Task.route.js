@@ -1,29 +1,42 @@
 const { Router } = require("express");
 const { TaskModel } = require("../Models/Task.model");
+const { check, validationResult } = require("express-validator");
+
 const { authentication } = require("../Middleware/AuthMiddleware");
 
 const TaskRouter = Router();
 
 // 1. Create Task
-TaskRouter.post("/create", authentication, async (req, res) => {
-  try {
-    const { title, description, priority, status, assignedTo } = req.body;
-    console.log(req.user);
-    const newTask = new TaskModel({
-      title,
-      description,
-      priority,
-      status,
-      assignedTo,
-      createdBy: req.user.userId,
-    });
-    const saveTask = await newTask.save();
-    res.status(201).send({ msg: "New Task Created", saveTask });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
+TaskRouter.post(
+  "/create",
+  authentication,
+  [
+    check("title", "Title is required").not().isEmpty(),
+    check("description", "Description is required").not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { title, description, priority, status, assignedTo } = req.body;
+      const newTask = new TaskModel({
+        title,
+        description,
+        priority,
+        status,
+        assignedTo,
+        createdBy: req.user.userId,
+      });
+      const saveTask = await newTask.save();
+      res.status(201).send({ msg: "New Task Created", saveTask });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
   }
-});
+);
 
 // 2. Retrive Task
 TaskRouter.get("/", authentication, async (req, res) => {
