@@ -18,7 +18,7 @@ UserRouter.post("/signup", async (req, res) => {
           res.status(500).send({ message: "Something wrong with signup", err });
         } else {
           const newSignup = new UserModel({
-            username: username,
+            name: name,
             email: email,
             password: hash,
           });
@@ -50,7 +50,7 @@ UserRouter.post("/login", async (req, res) => {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY, {
           expiresIn,
         });
-        res.status(201).send({ message: "Login Successful", token });
+        res.status(201).send({ message: "Login Successful", token, user });
       } else {
         res.status(500).send({ message: "Invalid Credential" });
       }
